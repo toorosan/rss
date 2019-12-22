@@ -10,15 +10,12 @@ import (
 // feedGetter holds instance of getter object, defined for testing purposes.
 var feedGetter getter = &webGetter{}
 
-// Parse holds main logic for parsing multiple urls
+// Parse holds main logic for parsing multiple urls.
+// For now simply log all the errors, try to return anything.
 func Parse(urls []string) []RssItem {
 	var (
-		// errs defines map for potential errors.
-		errs = map[string]error{}
 		// parsedURLs defines map of URLs prepared to be processed.
 		parsedURLs = map[string]*url.URL{}
-		// resultsMap defines map for acquired RSS Items.
-		resultMap = map[string][]RssItem{}
 		// resultsTotal defines counter for total amount of results.
 		resultsTotal int32 = 0
 		// define wait group to ensure that all URLs were processed at the end.
@@ -28,14 +25,19 @@ func Parse(urls []string) []RssItem {
 		rawURL := urls[i]
 		feedURL, err := url.Parse(rawURL)
 		if err != nil {
-			errs[rawURL] = fmt.Errorf("failed to parse feed url %q: %v", rawURL, err)
+			fmt.Println(fmt.Errorf("failed to parse feed url %q: %v", rawURL, err))
 
 			continue
 		}
 		// this assignment allows us to skip processing in case if URLs are repeated multiple times.
 		parsedURLs[feedURL.String()] = feedURL
 	}
+	// resultGroups defines array of acquired RSS Items, grouped by source URL.
+	resultGroups := make([][]RssItem, len(parsedURLs))
+	j := int32(-1)
 	for i := range parsedURLs {
+		atomic.AddInt32(&j, 1)
+		k := j + 0
 		feedURL := parsedURLs[i]
 		feedURLstr := feedURL.String()
 		wg.Add(1)
@@ -44,29 +46,25 @@ func Parse(urls []string) []RssItem {
 			defer wg.Done()
 			parser, err := newParser(*feedURL, feedGetter)
 			if err != nil {
-				errs[feedURLstr] = fmt.Errorf("failed to get specific rss parser for url %q: %v", feedURLstr, err)
+				fmt.Println(fmt.Errorf("failed to get specific rss parser for url %q: %v", feedURLstr, err))
 
 				return
 			}
-			resultMap[feedURLstr], err = parser.Parse()
+			resultGroup, err := parser.Parse()
 			if err != nil {
-				errs[feedURLstr] = fmt.Errorf("failed to parse feed from url %q: %v", feedURLstr, err)
+				fmt.Println(fmt.Errorf("failed to parse feed from url %q: %v", feedURLstr, err))
 
 				return
 			}
+			resultGroups[k] = resultGroup
 			// increase size of results to make precise array size in the end.
-			atomic.AddInt32(&resultsTotal, int32(len(resultMap[feedURLstr])))
+			atomic.AddInt32(&resultsTotal, int32(len(resultGroup)))
 		}()
 	}
 	wg.Wait()
 
-	for u, err := range errs {
-		// for now simply log all the errors.
-		fmt.Printf("failed to acquire rss items for %q: %v\n", u, err)
-	}
-
 	results := make([]RssItem, 0, resultsTotal)
-	for _, r := range resultMap {
+	for _, r := range resultGroups {
 		results = append(results, r...)
 	}
 

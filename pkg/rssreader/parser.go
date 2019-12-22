@@ -31,7 +31,8 @@ func newParser(u url.URL, g getter) (parser, error) {
 	}
 
 	switch version {
-	// ToDo: add at least one RSS version parser implementation
+	case rss20:
+		return &rss20Parser{blob: blobXML}, nil
 	default:
 		return nil, fmt.Errorf("rss version %q is not supported", version)
 	}
