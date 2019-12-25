@@ -12,6 +12,7 @@ var (
 	configFileLocation        string
 	defaultOutputFileLocation = "output.json"
 	showVersionAndExit        = false
+	silentMode                = false
 )
 
 func showVersion() bool {
@@ -27,6 +28,7 @@ func showVersion() bool {
 
 func initCMDFlags() {
 	flag.BoolVar(&showVersionAndExit, "version", false, "print version and exit")
+	flag.BoolVar(&silentMode, "silent", false, "do not print anything except errors")
 	flag.StringVar(&configFileLocation, "config", "", "path to configuration file, overrides values passed directly as arguments")
 	flag.Var(&appConfig.FeedURLs, "feed", "URL(s) of RSS feed(s) to read")
 	flag.StringVar(&appConfig.OutputFilePath, "output", "", "path to output json file")
