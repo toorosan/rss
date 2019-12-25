@@ -1,6 +1,7 @@
 package rssreader
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -12,4 +13,8 @@ type RssItem struct {
 	Link        string
 	PubishDate  time.Time
 	Description string
+}
+
+func (ri RssItem) String() string {
+	return fmt.Sprintf("%s: %s - %q - %s", ri.Source, ri.PubishDate, ri.Title, ri.Link)
 }

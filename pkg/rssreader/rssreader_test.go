@@ -11,24 +11,46 @@ func TestParse(t *testing.T) {
 	feedGetter = &mockedGetter{
 		expectedError: fmt.Errorf("failed to get rss feed"),
 	}
-	results := Parse(urls)
+	results, err := Parse(urls)
 	if len(results) != 0 {
 		t.Fatal("failed to ensure empty results for non-rss url")
 	}
+	if err == nil {
+		t.Fatal("failed to ensure errors for non-rss url")
+	}
+	if _, ok := err.(*errorList); !ok {
+		t.Fatal("failed to ensure error type is error list")
+	}
+	if err.Error() != "failed to get specific rss parser for url \"http://example.com\": failed to get blob data from url \"http://example.com\"" {
+		t.Fatal("failed to ensure error text")
+	}
+
 	// test for unsupported version
 	feedGetter = &mockedGetter{
 		result: makeTestRSSBlob("unsupported-version"),
 	}
-	results = Parse(urls)
+	results, err = Parse(urls)
 	if len(results) != 0 {
 		t.Fatal("failed to ensure empty results for unsupported version of rss")
+	}
+	if err == nil {
+		t.Fatal("failed to ensure errors for unsupported version of rss")
+	}
+	if _, ok := err.(*errorList); !ok {
+		t.Fatal("failed to ensure error type is error list")
+	}
+	if err.Error() != "failed to get specific rss parser for url \"http://example.com\": rss version \"unsupported-version\" is not supported" {
+		t.Fatal("failed to ensure error text")
 	}
 
 	// test for supported version
 	feedGetter = &mockedGetter{
 		result: makeTestRSSBlob(string(rss20)),
 	}
-	results = Parse(urls)
+	results, err = Parse(urls)
+	if err != nil {
+		t.Fatal("failed to ensure no errors if 3 same URLs were passed")
+	}
 	if len(results) != 1 {
 		t.Fatal("failed to ensure result is exactly one even if 3 URLs were passed, as they are the same")
 	}
@@ -55,8 +77,15 @@ func TestParse(t *testing.T) {
 	feedGetter = &mockedGetter{
 		result: makeTestRSSBlob(string(rss20)),
 	}
-	results = Parse([]string{"http://example.com", "https://example.com"})
+	results, err = Parse([]string{"http://example.com", "https://example.com"})
+	if err != nil {
+		t.Fatal("failed to ensure no errors are present")
+	}
+
 	if len(results) != 2 {
 		t.Fatal("failed to ensure 2 results are present")
+	}
+	if results[0].String() != "Example News: 2003-06-03 09:39:21 +0000 UTC - \"Example item title\" - http://example.com/" {
+		t.Fatal("failed to ensure first result is equal to the expectations")
 	}
 }
