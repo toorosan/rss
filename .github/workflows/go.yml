@@ -15,19 +15,21 @@ jobs:
         go-version: 1.13
       id: go
     
-    - name: Ensure SRC
-      run: mkdir -p /home/runner/work/workspace/src/github.com/toorosan
+#     - name: Ensure SRC
+#       run: mkdir -p /home/runner/work/workspace/src/github.com/toorosan
     
-    - name: Copy SRC
-      run: ln -s /home/runner/work/rss/rss /home/runner/work/workspace/src/github.com/toorosan/rss
+#     - name: Copy SRC
+#       run: ln -s /home/runner/work/rss/rss /home/runner/work/workspace/src/github.com/toorosan/rss
     
     #- name: Switch current dir
     #  run: cd /home/runner/go/src/github.com/toorosan/rss
 
     - name: Install
-      run: GOPATH=/home/runner/work/workspace go install -race -v ./...
+#       run: GOPATH=/home/runner/work/workspace go install -mod vendor -race -v ./...
+      run: go install -mod vendor -race -v ./...
 #       env:
 #         GOPATH: /home/runner/go
 
     - name: Test
-      run: GOPATH=/home/runner/work/workspace go test -json ./...
+      run: go test -mod vendor -json ./...
+#       run: GOPATH=/home/runner/work/workspace go test -mod vendor -json ./...
