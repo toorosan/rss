@@ -9,7 +9,11 @@ import (
 
 const (
 	// appName defines application name
-	appName = "RSS Reader application"
+	appName = "RSS Reader"
+	// appName defines application version
+	appVersion = "0.0.1"
+	// appManufacturer defines application maintainer information
+	appMaintainer = "https://github.com/toorosan"
 )
 
 func main() {
