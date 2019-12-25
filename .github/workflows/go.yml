@@ -16,10 +16,10 @@ jobs:
       id: go
     
     - name: Ensure SRC
-      run: rm -rf /home/runner/work/workspace && mkdir -p /home/runner/work/workspace/src/github.com/toorosan
+      run: mkdir -p /home/runner/work/workspace/src/github.com/toorosan
     
     - name: Copy SRC
-      run: ln -s /home/runner/work/rss/rss /home/runner/go/src/github.com/toorosan/rss
+      run: ln -s /home/runner/work/rss/rss /home/runner/go/src/github.com/toorosan/
     
     #- name: Switch current dir
     #  run: cd /home/runner/go/src/github.com/toorosan/rss
