@@ -18,17 +18,28 @@ const (
 
 func main() {
 	fmt.Printf("%q initiated\n", appName)
-	if RssDemo() {
+	initCMDFlags()
+	if processCMDFlags() {
+		return
+	}
+	if runApp() {
 		defer os.Exit(1)
 	}
 	fmt.Printf("%q is stopped\n", appName)
 }
 
-func RssDemo() bool {
-	urls := []string{"https://www.feedforall.com/sample.xml", "https://www.feedforall.com/sample-feed.xml"}
-	results, err := rssreader.Parse(urls)
-	for _, item := range results {
-		println(item.String())
+func runApp() bool {
+	results, err := rssreader.Parse(appConfig.FeedURLs)
+	toFile := make([]rssItem, len(results))
+	for i := range results {
+		toFile[i].Title = results[i].Title
+		toFile[i].Source = results[i].Source
+		toFile[i].SourceURL = results[i].SourceURL
+		toFile[i].Link = results[i].Link
+		toFile[i].PubishDate = results[i].PubishDate
+		toFile[i].Description = results[i].Description
+
+		println(results[i].String())
 	}
 	if err != nil {
 		println("following errors occured:\n", err.Error())
