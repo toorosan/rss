@@ -48,7 +48,7 @@ func TestGetRSSVersionFail(t *testing.T) {
 	if err == nil {
 		t.Fatal("failed to ensure xml parse error")
 	}
-	expectedError := "failed to unmarshal xml: EOF"
+	expectedError := "failed to unmarshal xml: failed to decode target: EOF"
 	if expectedError != err.Error() {
 		t.Fatalf("failed to ensure xml parse error is same as expected: %q != %q", expectedError, err.Error())
 	}

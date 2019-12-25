@@ -1,10 +1,15 @@
 package rssreader
 
 import (
+	"bytes"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
+
+	"golang.org/x/net/html/charset"
 )
 
 // parser describes parser for certain RSS feed version.
@@ -49,4 +54,46 @@ func (w *webGetter) Get(u url.URL) ([]byte, error) {
 	defer resp.Body.Close()
 
 	return ioutil.ReadAll(resp.Body)
+}
+
+// parseXML is used instead of regular `xml.Unmarshal`
+// to fix XML decoding error: "xml: encoding \"XXX\" declared but Decoder.CharsetReader is nil".
+func parseXML(xmlDoc []byte, target interface{}) error {
+	reader := bytes.NewReader(xmlDoc)
+	decoder := xml.NewDecoder(reader)
+	decoder.CharsetReader = charset.NewReaderLabel
+	err := decoder.Decode(target)
+	if err != nil {
+		return fmt.Errorf("failed to decode target: %v", err)
+	}
+
+	return nil
+}
+
+// parseTime is a handy function to parse most of known date-time formats.
+func parseTime(src string) (t time.Time, err error) {
+	knownTimeLayouts := []string{time.ANSIC,
+		time.UnixDate,
+		time.RubyDate,
+		time.RFC822,
+		time.RFC822Z,
+		time.RFC850,
+		time.RFC1123,
+		time.RFC1123Z,
+		time.RFC3339,
+		time.RFC3339Nano,
+		time.Kitchen,
+		time.Stamp,
+		time.StampMilli,
+		time.StampMicro,
+		time.StampNano,
+	}
+	for _, layout := range knownTimeLayouts {
+		t, err = time.Parse(layout, src)
+		if err == nil {
+			return
+		}
+	}
+
+	return
 }

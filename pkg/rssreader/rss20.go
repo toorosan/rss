@@ -1,9 +1,7 @@
 package rssreader
 
 import (
-	"encoding/xml"
 	"fmt"
-	"net/http"
 )
 
 const rss20 rssVerion = "2.0"
@@ -39,15 +37,15 @@ func (r *rss20Parser) Parse() ([]RssItem, error) {
 		return nil, err
 	}
 	raw := rss20XML{}
-	err := xml.Unmarshal(r.blob, &raw)
+	err := parseXML(r.blob, &raw)
 	if err != nil {
 		return fail(err)
 	}
 	result := make([]RssItem, len(raw.Items))
 	for i, item := range raw.Items {
-		pDate, err := http.ParseTime(item.PubDate)
+		pDate, err := parseTime(item.PubDate)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse date %q", item.PubDate)
+			return nil, fmt.Errorf("failed to parse date %q: %v", item.PubDate, err)
 		}
 		result[i] = RssItem{
 			Title:       item.Title,

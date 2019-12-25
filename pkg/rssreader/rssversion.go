@@ -10,7 +10,7 @@ type rssVerion string
 
 func getRSSVersion(blob []byte) (rssVerion, error) {
 	var base baseRSSXML
-	err := xml.Unmarshal(blob, &base)
+	err := parseXML(blob, &base)
 	if err != nil {
 		return "", fmt.Errorf("failed to unmarshal xml: %v", err)
 	}

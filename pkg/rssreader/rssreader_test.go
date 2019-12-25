@@ -66,7 +66,7 @@ func TestParse(t *testing.T) {
 	if results[0].Link != "http://example.com/" {
 		t.Fatal("failed to ensure Link field is same as expected")
 	}
-	if results[0].PubishDate.String() != "2003-06-03 09:39:21 +0000 UTC" {
+	if results[0].PubishDate.String() != "2003-06-03 09:39:21 +0000 GMT" {
 		t.Fatal("failed to ensure PubishDate field is same as expected")
 	}
 	if results[0].Description != "Example description with  inside." {
@@ -85,7 +85,7 @@ func TestParse(t *testing.T) {
 	if len(results) != 2 {
 		t.Fatal("failed to ensure 2 results are present")
 	}
-	if results[0].String() != "Example News: 2003-06-03 09:39:21 +0000 UTC - \"Example item title\" - http://example.com/" {
+	if results[0].String() != "Example News: 2003-06-03 09:39:21 +0000 GMT - \"Example item title\" - http://example.com/" {
 		t.Fatal("failed to ensure first result is equal to the expectations")
 	}
 }
