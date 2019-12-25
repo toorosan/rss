@@ -15,7 +15,10 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
-    
+
+    - name: Get
+      run: go get -race -t -v ./...
+
     - name: Install
       run: go install -race -v ./...
 
