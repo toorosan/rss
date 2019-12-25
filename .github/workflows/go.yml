@@ -19,7 +19,7 @@ jobs:
       run: mkdir -p /home/runner/work/workspace/src/github.com/toorosan
     
     - name: Copy SRC
-      run: ln -s /home/runner/work/rss/rss /home/runner/go/src/github.com/toorosan/
+      run: ln -s /home/runner/work/rss/rss /home/runner/work/workspace/src/github.com/toorosan/rss
     
     #- name: Switch current dir
     #  run: cd /home/runner/go/src/github.com/toorosan/rss
