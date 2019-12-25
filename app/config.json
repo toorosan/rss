@@ -1,4 +1,7 @@
 {
-  "feedURLs": [],
+  "feedURLs": [
+    "https://www.feedforall.com/sample.xml",
+    "https://www.feedforall.com/sample-feed.xml"
+  ],
   "outputFilePath": "output.json"
 }
