@@ -14,15 +14,15 @@ jobs:
       id: go
     
     - name: Ensure SRC
-      run: mkdir -p $GO_PATH/src/github.com/toorosan
+      run: mkdir -p $GOPATH/src/github.com/toorosan
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
       with:
-        path: $GO_PATH/src/github.com/toorosan/rss
+        path: $GOPATH/src/github.com/toorosan/rss
     
     - name: Switch current dir
-      run: cd $GO_PATH/src/github.com/toorosan/rss
+      run: cd $GOPATH/src/github.com/toorosan/rss
 
     - name: Install
       run: go install -race -v ./...
